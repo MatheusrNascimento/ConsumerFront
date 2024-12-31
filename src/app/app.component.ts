@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Customer } from './models/Constomer';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { plainToInstance } from 'class-transformer';
 
 @Component({
@@ -19,13 +19,16 @@ export class AppComponent {
   constructor(private http: HttpClient) { }
 
   getCustomers() {
-    this.http.get<Customer[]>('http://localhost:3333/customers')
-      .subscribe(data => {
-        const customers = plainToInstance(Customer, data);
-        console.log('Customers fetched', data);
-        this.customerList = customers;
-      }, error => {
-        console.error('Error fetching customers', error);
+
+    this.http.get<Customer[]>('api/customers')
+      .subscribe({
+        next: (data) => {
+          const customers = plainToInstance(Customer, data);
+          this.customerList = customers;
+        },
+        error: (error) => {
+          console.error('Error fetching customers', error);
+        }
       });
   }
 }
